@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AEFAS - AI-Enhanced Formative Assessment System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">A</div>
+        <div>
+          <h1>AEFAS</h1>
+          <p>University Prototype</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-link active">
+          <span class="nav-icon">▣</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#generate" class="nav-link">
+          <span class="nav-icon">✦</span>
+          <span>Generate Questions</span>
+        </a>
+        <a href="#rag" class="nav-link">
+          <span class="nav-icon">⬡</span>
+          <span>RAG Knowledge Base</span>
+        </a>
+        <a href="#review" class="nav-link">
+          <span class="nav-icon">✎</span>
+          <span>Review Interface</span>
+        </a>
+        <a href="#bank" class="nav-link">
+          <span class="nav-icon">☰</span>
+          <span>Item Bank</span>
+        </a>
+        <a href="#student" class="nav-link">
+          <span class="nav-icon">◎</span>
+          <span>Student Portal</span>
+        </a>
+        <a href="#export" class="nav-link">
+          <span class="nav-icon">⇩</span>
+          <span>Export Center</span>
+        </a>
+        <a href="#settings" class="nav-link">
+          <span class="nav-icon">⚙</span>
+          <span>Settings / Architecture</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="prototype-badge">
+          <span class="status-dot"></span>
+          Front-end Demo Only
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h2>AI-Enhanced Formative Assessment System</h2>
+          <p>Centralized AI-powered formative assessment generation prototype for lecturers and students</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-btn" id="demoFillBtn">Load Demo Data</button>
+          <button class="primary-btn" id="scrollGenerateBtn">Start Workflow</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Overview</span>
+            <h3>Dashboard</h3>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Total Questions in Bank</span>
+            <h4 id="statBankCount">12</h4>
+            <p>Approved and stored items</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Generated This Session</span>
+            <h4 id="statGeneratedCount">0</h4>
+            <p>New AI-generated draft questions</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Approved Questions</span>
+            <h4 id="statApprovedCount">12</h4>
+            <p>Human-reviewed and accepted</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Uploaded RAG Files</span>
+            <h4 id="statRagCount">5</h4>
+            <p>Teaching resources indexed for grounding</p>
+          </div>
+          <div class="stat-card highlight">
+            <span class="stat-label">Export Status</span>
+            <h4 id="statExportStatus">Ready</h4>
+            <p>Moodle-ready prototype export available</p>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card large-card">
+            <div class="card-header">
+              <h4>Project Summary</h4>
+              <span class="pill pill-blue">Capstone Prototype</span>
+            </div>
+            <p class="muted">
+              AEFAS demonstrates how lecturers can upload teaching resources, generate AI-assisted formative
+              assessment questions, review them in a human-in-the-loop workflow, store approved items in a centralized
+              bank, and export questions to Moodle-ready formats such as GIFT and XML.
+            </p>
+
+            <div class="workflow-list">
+              <div class="workflow-step">
+                <span>1</span>
+                <div>
+                  <strong>Upload Academic Documents</strong>
+                  <p>Subject descriptions, outcomes, rubrics, and sample assessments are added to the RAG knowledge base.</p>
+                </div>
+              </div>
+              <div class="workflow-step">
+                <span>2</span>
+                <div>
+                  <strong>Generate Questions</strong>
+                  <p>The system creates draft assessment items using selected topic, category, difficulty, and grounded context.</p>
+                </div>
+              </div>
+              <div class="workflow-step">
+                <span>3</span>
+                <div>
+                  <strong>Review and Approve</strong>
+                  <p>Lecturers edit, refine, approve, or discard questions before they enter the item bank.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h4>How AEFAS Works</h4>
+              <span class="pill pill-dark">Workflow</span>
+            </div>
+
+            <div class="process-flow">
+              <div class="flow-node">Upload Docs</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">Generate</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">Review</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">Approve</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">Store</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">Export</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="generate" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Assessment Authoring</span>
+            <h3>Generate Questions</h3>
+          </div>
+          <div class="section-actions">
+            <span class="mini-note">Session limit: maximum 100 questions</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <form id="generateForm" class="form-grid">
+            <div class="form-group">
+              <label for="discipline">Discipline</label>
+              <select id="discipline">
+                <option>Information Technology</option>
+                <option>Information Systems</option>
+                <option>Accounting</option>
+                <option>Business</option>
+                <option>Management</option>
+                <option>TESOL</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="category">Question Category</label>
+              <select id="category">
+                <option>Theory</option>
+                <option>Synthesis</option>
+                <option>Application</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="topic">Topic</label>
+              <input type="text" id="topic" placeholder="e.g. Database Normalization" />
+            </div>
+
+            <div class="form-group">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty">
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+                <option>AI Suggested</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="mcqCount">Multiple Choice</label>
+              <input type="number" id="mcqCount" min="0" max="100" value="2" />
+            </div>
+
+            <div class="form-group">
+              <label for="tfCount">True/False</label>
+              <input type="number" id="tfCount" min="0" max="100" value="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="shortCount">Short Answer</label>
+              <input type="number" id="shortCount" min="0" max="100" value="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="essayCount">Essay</label>
+              <input type="number" id="essayCount" min="0" max="100" value="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="numCount">Numerical</label>
+              <input type="number" id="numCount" min="0" max="100" value="0" />
+            </div>
+
+            <div class="form-group">
+              <label for="matchingCount">Matching</label>
+              <input type="number" id="matchingCount" min="0" max="100" value="0" />
+            </div>
+
+            <div class="form-summary">
+              <div class="summary-chip">
+                Total Questions:
+                <strong id="totalQuestionCount">5</strong>
+              </div>
+              <div class="summary-chip blue-chip">
+                RAG Context:
+                <strong id="ragContextStatus">5 files active</strong>
+              </div>
+            </div>
+
+            <div class="form-buttons">
+              <button type="submit" class="primary-btn">Generate Questions</button>
+              <button type="button" id="resetFormBtn" class="secondary-btn">Reset Form</button>
+              <button type="button" id="sampleDemoBtn" class="ghost-btn">Load Sample Demo</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="rag" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Retrieval-Augmented Generation</span>
+            <h3>RAG Knowledge Base</h3>
+          </div>
+        </div>
+
+        <div class="rag-layout">
+          <div class="card">
+            <div class="card-header">
+              <h4>Upload Teaching Resources</h4>
+              <span class="pill pill-green">AI Grounding Context</span>
+            </div>
+
+            <div class="upload-box" id="uploadBox">
+              <div class="upload-icon">⬆</div>
+              <h5>Drop subject files here</h5>
+              <p>Prototype upload zone for course materials used to ground AI generation.</p>
+              <div class="upload-actions">
+                <button class="secondary-btn fake-upload" data-file="Subject Description.pdf">Subject Description.pdf</button>
+                <button class="secondary-btn fake-upload" data-file="Subject Outcomes.pdf">Subject Outcomes.pdf</button>
+                <button class="secondary-btn fake-upload" data-file="Sample Assessment.pdf">Sample Assessment.pdf</button>
+                <button class="secondary-btn fake-upload" data-file="Marking Rubric.pdf">Marking Rubric.pdf</button>
+                <button class="secondary-btn fake-upload" data-file="Assessment Guidelines.pdf">Assessment Guidelines.pdf</button>
+              </div>
+            </div>
+
+            <div class="file-grid" id="ragFileList"></div>
+          </div>
+
+          <div class="rag-side">
+            <div class="card">
+              <div class="card-header">
+                <h4>How RAG improves question quality</h4>
+                <span class="pill pill-blue">Why it matters</span>
+              </div>
+              <ul class="feature-list">
+                <li>Keeps questions within subject scope</li>
+                <li>Reduces hallucinations</li>
+                <li>Supports realistic assessment style</li>
+                <li>Helps assign appropriate difficulty</li>
+                <li>Grounds AI output in KOI teaching materials</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h4>RAG Pipeline</h4>
+                <span class="pill pill-dark">Presentation View</span>
+              </div>
+              <div class="pipeline">
+                <div class="pipeline-step">Upload Docs</div>
+                <div class="pipeline-step">Chunking</div>
+                <div class="pipeline-step">Embeddings</div>
+                <div class="pipeline-step">Retrieval</div>
+                <div class="pipeline-step">Prompt Injection</div>
+                <div class="pipeline-step">AI Output</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="review" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Human-in-the-Loop</span>
+            <h3>Review Interface</h3>
+          </div>
+          <div class="section-actions">
+            <span class="mini-note">Generated questions appear here for editing and approval</span>
+          </div>
+        </div>
+
+        <div id="reviewList" class="review-list">
+          <div class="empty-state">
+            <h4>No generated questions yet</h4>
+            <p>Use the Generate Questions section to create prototype assessment items.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="bank" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Repository</span>
+            <h3>Item Bank</h3>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="bank-filters">
+            <div class="form-group">
+              <label for="bankTopicFilter">Topic</label>
+              <input type="text" id="bankTopicFilter" placeholder="Search by topic" />
+            </div>
+            <div class="form-group">
+              <label for="bankDifficultyFilter">Difficulty</label>
+              <select id="bankDifficultyFilter">
+                <option value="">All</option>
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+                <option>AI Suggested</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bankCategoryFilter">Category</label>
+              <select id="bankCategoryFilter">
+                <option value="">All</option>
+                <option>Theory</option>
+                <option>Synthesis</option>
+                <option>Application</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bankTypeFilter">Question Type</label>
+              <select id="bankTypeFilter">
+                <option value="">All</option>
+                <option>Multiple Choice</option>
+                <option>True/False</option>
+                <option>Short Answer</option>
+                <option>Essay</option>
+                <option>Numerical</option>
+                <option>Matching</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bankDisciplineFilter">Discipline</label>
+              <select id="bankDisciplineFilter">
+                <option value="">All</option>
+                <option>Information Technology</option>
+                <option>Information Systems</option>
+                <option>Accounting</option>
+                <option>Business</option>
+                <option>Management</option>
+                <option>TESOL</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-actions">
+            <button class="secondary-btn" id="searchBankBtn">Search Bank</button>
+            <button class="ghost-btn" id="resetBankBtn">Reset</button>
+            <button class="primary-btn" id="selectExportBtn">Select for Export</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Topic</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Difficulty</th>
+                  <th>Discipline</th>
+                  <th>Source</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="itemBankTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="student" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Future Module</span>
+            <h3>Student Portal</h3>
+          </div>
+        </div>
+
+        <div class="student-layout">
+          <div class="card">
+            <div class="card-header">
+              <h4>Self-Study Practice Generator</h4>
+              <span class="pill pill-blue">Future Student View</span>
+            </div>
+
+            <div class="form-grid student-form">
+              <div class="form-group">
+                <label for="studyTopic">Study Topic</label>
+                <input type="text" id="studyTopic" placeholder="e.g. Data Privacy Principles" />
+              </div>
+
+              <div class="form-group">
+                <label for="studyDifficulty">Difficulty</label>
+                <select id="studyDifficulty">
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="practiceMode">Practice Mode</label>
+                <select id="practiceMode">
+                  <option>Quick Practice</option>
+                  <option>Exam Preparation</option>
+                  <option>Revision Drill</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-buttons">
+              <button class="primary-btn" id="generatePracticeBtn">Generate Practice Questions</button>
+              <button class="secondary-btn" id="getExplanationBtn">Get AI Explanation</button>
+            </div>
+
+            <p class="future-note">
+              Future integration via Moodle LTI and restricted student access.
+            </p>
+          </div>
+
+          <div id="studentResults" class="student-results">
+            <div class="result-card">
+              <h4>Practice Question</h4>
+              <p>Explain why normalization is important in relational database design.</p>
+            </div>
+            <div class="result-card">
+              <h4>Explanation</h4>
+              <p>Normalization reduces redundancy, improves consistency, and helps maintain data integrity.</p>
+            </div>
+            <div class="result-card">
+              <h4>Confidence Hint</h4>
+              <p>Moderate confidence: revise keys, dependencies, and common anomalies.</p>
+            </div>
+            <div class="result-card">
+              <h4>Recommended Revision</h4>
+              <p>Review 1NF, 2NF, 3NF, and practical examples of schema improvement.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="export" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Deployment Output</span>
+            <h3>Export Center</h3>
+          </div>
+        </div>
+
+        <div class="export-layout">
+          <div class="card">
+            <div class="card-header">
+              <h4>Moodle Export Actions</h4>
+              <span class="pill pill-green">Prototype Export</span>
+            </div>
+
+            <div class="export-actions">
+              <button class="primary-btn" id="giftExportBtn">Export as GIFT</button>
+              <button class="secondary-btn" id="xmlExportBtn">Export as Moodle XML</button>
+              <button class="ghost-btn" id="previewExportBtn">Preview Export Format</button>
+              <button class="secondary-btn" id="downloadPrototypeBtn">Download Prototype File</button>
+            </div>
+
+            <div class="export-preview" id="exportPreview">
+              <pre id="exportPreviewText">Export preview will appear here.</pre>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h4>Moodle Import Help</h4>
+              <button class="help-link-btn" id="openHelpModal">View Help</button>
+            </div>
+            <ol class="help-steps">
+              <li>Open Moodle Question Bank</li>
+              <li>Click Import</li>
+              <li>Choose GIFT or XML</li>
+              <li>Upload file</li>
+              <li>Confirm category</li>
+              <li>Import successfully</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">System View</span>
+            <h3>Settings / Architecture</h3>
+          </div>
+        </div>
+
+        <div class="architecture-grid">
+          <div class="arch-card">
+            <span class="arch-label">Frontend</span>
+            <h4>HTML / CSS / JavaScript</h4>
+            <p>Responsive single-page prototype with dashboard layout and interactive components.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">Backend (Future)</span>
+            <h4>Flask / FastAPI / Node.js</h4>
+            <p>Potential API services for authentication, storage, AI orchestration, and export pipelines.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">AI Layer</span>
+            <h4>Google Gemini</h4>
+            <p>Future question generation engine for prompts, feedback, and assessment drafting.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">Retrieval Layer</span>
+            <h4>RAG + Teaching Resources</h4>
+            <p>Uploaded academic documents provide contextual grounding for safer and more relevant outputs.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">Database</span>
+            <h4>PostgreSQL / MongoDB</h4>
+            <p>Future item bank storage, metadata indexing, audit logging, and export records.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">Deployment</span>
+            <h4>Linux / Docker / Local</h4>
+            <p>Flexible development and deployment setup for prototype, testing, and institutional hosting.</p>
+          </div>
+          <div class="arch-card">
+            <span class="arch-label">Security</span>
+            <h4>OAuth2 / SSO / Role Access</h4>
+            <p>Planned lecturer and student access controls for future production deployment.</p>
+          </div>
+          <div class="arch-card emphasis">
+            <span class="arch-label">Prototype Note</span>
+            <h4>Front-end Only Demonstration</h4>
+            <p>No real database, AI model, login, analytics, or backend integration is included in this university prototype.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="helpModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h4>Moodle Import Guide</h4>
+        <button class="modal-close" id="closeHelpModal">×</button>
+      </div>
+      <div class="modal-body">
+        <p>This prototype demonstrates how approved questions could be exported into Moodle-compatible formats.</p>
+        <ol class="help-steps">
+          <li>Open Moodle and go to the Question Bank.</li>
+          <li>Select the Import option.</li>
+          <li>Choose either GIFT or Moodle XML format.</li>
+          <li>Upload the exported file from AEFAS.</li>
+          <li>Assign or confirm the destination category.</li>
+          <li>Complete the import process.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
