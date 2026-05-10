@@ -4,7 +4,7 @@ import faiss
 import numpy as np
 
 
-class LocalFAISSStore:
+class LocalFAISSStore: # FAISS Database handler
     def __init__(self, index_dir="data/faiss_index"):
         self.index_dir = index_dir
         self.index_path = os.path.join(index_dir, "index.faiss")

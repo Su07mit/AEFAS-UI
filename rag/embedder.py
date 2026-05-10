@@ -9,3 +9,7 @@ class LocalEmbedder:
 
     def batch_embed(self, texts):
         return self.model.encode(texts, convert_to_numpy=True)
+
+    def encode(self, texts):
+        """Alias for batch_embed — used by app.py and retriever"""
+        return self.model.encode(texts, convert_to_numpy=True)

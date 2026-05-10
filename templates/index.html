@@ -287,16 +287,35 @@
               <span class="pill pill-green">AI Grounding Context</span>
             </div>
 
-            <div class="upload-box" id="uploadBox">
-              <div class="upload-icon">⬆</div>
-              <h5>Drop subject files here</h5>
-              <p>Prototype upload zone for course materials used to ground AI generation.</p>
-              <div class="upload-actions">
-                <button class="secondary-btn fake-upload" data-file="Subject Description.pdf">Subject Description.pdf</button>
-                <button class="secondary-btn fake-upload" data-file="Subject Outcomes.pdf">Subject Outcomes.pdf</button>
-                <button class="secondary-btn fake-upload" data-file="Sample Assessment.pdf">Sample Assessment.pdf</button>
-                <button class="secondary-btn fake-upload" data-file="Marking Rubric.pdf">Marking Rubric.pdf</button>
-                <button class="secondary-btn fake-upload" data-file="Assessment Guidelines.pdf">Assessment Guidelines.pdf</button>
+<div class="upload-box" id="uploadBox">
+  <div class="upload-icon">⬆</div>
+  <p>Drop subject files here or click to browse</p>
+  <input 
+    type="file" 
+    id="realFileInput" 
+    multiple 
+    accept=".pdf" 
+    style="display:none"
+  >
+  <button 
+    class="secondary-btn" 
+    onclick="document.getElementById('realFileInput').click()"
+  >
+    Choose PDF Files
+  </button>
+  <div 
+    class="upload-actions" 
+    id="uploadedFilesList"
+  >
+  </div>
+  <button 
+    class="secondary-btn" 
+    id="buildIndexBtn" 
+    style="margin-top:10px; display:none"
+  >
+    ⚡ Build RAG Index
+  </button>
+</div>
               </div>
             </div>
 
@@ -629,6 +648,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

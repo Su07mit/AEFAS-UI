@@ -1,12 +1,12 @@
 from rag.pdf_loader import load_pdfs
 from rag.chunker import chunk_text
-from rag.embedder import LocalEmbedder
+from rag.embedder import LocalEmbedder # offline ML for me to create embeddings
 from rag.vector_store import LocalFAISSStore
 
 print(" Starting ingestion...")
 
 # 1. Load PDFs
-documents = load_pdfs("data/raw_text")   # adjust if needed
+documents = load_pdfs("data/raw_text") # can be adjusted of we need
 
 # 2. Chunk
 chunks = []
