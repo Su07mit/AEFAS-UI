@@ -32,7 +32,7 @@ generator = pipeline(
     device=device,
     max_new_tokens=512,
     do_sample=True,
-    temperature=0.7,
+    temperature=0.3,
     repetition_penalty=1.1
 )
 

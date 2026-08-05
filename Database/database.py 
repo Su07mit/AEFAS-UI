@@ -1,0 +1,39 @@
+import sqlite3
+import os
+
+DB_PATH = os.path.join("data", "aefas.db")
+
+def get_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row  # allows dict-like access
+    return conn
+
+def init_db():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Table: uploaded files
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS uploaded_files (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT NOT NULL UNIQUE,
+            uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            indexed INTEGER DEFAULT 0
+        )
+    """)
+
+    # Table: generated question sets
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS question_sets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            discipline TEXT,
+            category TEXT,
+            topic TEXT,
+            difficulty TEXT,
+            questions_json TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    conn.commit()
+    conn.close()
