@@ -214,7 +214,7 @@ Go to the **Export** section to download approved questions in GIFT or XML forma
 ## 👨‍💻 Author
 
 **Sumit Kafle**
-Bachelor of Information Technology
+Masters of Information Technology
 GitHub: [@Su07mit](https://github.com/Su07mit)
 
 ---
