@@ -1,0 +1,15 @@
+.dash-nav{display:flex;justify-content:space-between;padding:12px 20px;background:#1e2327;color:#fff}
+.dash-nav a{color:#8ab4f8;text-decoration:none;margin:0 4px}
+.dash-stats{display:flex;gap:16px;padding:20px}
+.stat-card{background:#f5f5f5;padding:16px 24px;border-radius:8px;text-align:center}
+.stat-card h3{margin:0;font-size:28px}
+#moodle-panel,#questions-panel{padding:20px;border-top:1px solid #ddd}
+#moodle-panel input,#moodle-panel select{margin:4px 8px 4px 0;padding:6px}
+.q-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #eee}
+.q-body{flex:1}
+.q-meta{font-size:12px;color:#777}
+.auth-container{display:flex;justify-content:center;padding:60px 20px}
+.auth-form{width:320px;display:flex;flex-direction:column;gap:8px}
+.auth-form input{padding:8px}
+.flash-container{padding:10px 20px}
+.flash-error{color:#b00020}

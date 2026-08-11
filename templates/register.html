@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Register - AEFAS{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <form method="POST" class="auth-form">
+    <h2>Create your AEFAS account</h2>
+    <label>Username</label>
+    <input type="text" name="username" required autofocus>
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <label>Confirm password</label>
+    <input type="password" name="confirm_password" required>
+    <button type="submit">Register</button>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </form>
+</div>
+{% endblock %}

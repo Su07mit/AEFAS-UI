@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AEFAS{% endblock %}
+{% block content %}
+<nav class="dash-nav">
+  <span>AEFAS Dashboard</span>
+  <span>{{ current_user.username }} | <a href="{{ url_for('index') }}">Generator</a> | <a href="{{ url_for('auth.logout') }}">Logout</a></span>
+</nav>
+
+<div class="dash-stats">
+  <div class="stat-card"><h3>{{ total }}</h3><p>Total Questions</p></div>
+  <div class="stat-card"><h3>{{ pending }}</h3><p>Pending Review</p></div>
+  <div class="stat-card"><h3>{{ approved }}</h3><p>Approved</p></div>
+</div>
+
+<section id="moodle-panel">
+  <h3>Moodle Connection</h3>
+  <input id="moodleUrl" placeholder="https://your-moodle-site.edu">
+  <input id="moodleToken" placeholder="Web service token" type="password">
+  <button id="saveMoodle">Save</button>
+  <button id="testMoodle">Test Connection</button>
+  <div id="moodleStatus"></div>
+  <label>Course</label>
+  <select id="courseSelect"></select>
+  <button id="loadCourses">Load Courses</button>
+</section>
+
+<section id="questions-panel">
+  <h3>Question Bank</h3>
+  <div class="filters">
+    <button data-status="pending">Pending</button>
+    <button data-status="approved">Approved</button>
+    <button data-status="all">All</button>
+  </div>
+  <div id="questionList"></div>
+  <button id="exportGift">Export approved as GIFT</button>
+  <button id="pushMoodle">Push approved to Moodle</button>
+</section>
+
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+{% endblock %}
