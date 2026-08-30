@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -15,6 +15,7 @@ from rag.retriever import retrieve_context
 from Routes.auth_routes import auth_bp
 from Routes.dashboard_routes import dashboard_bp
 from Routes.moodle_routes import moodle_bp
+from Routes.student_routes import student_bp
 
 ALLOWED_EXTENSIONS = {"pdf"}
 
@@ -40,6 +41,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(moodle_bp)
+    app.register_blueprint(student_bp)
 
     @app.template_global()
     def asset_version(filename):
@@ -61,6 +63,8 @@ def create_app():
     @app.route("/")
     @login_required
     def index():
+        if current_user.role == "student":
+            return redirect(url_for("student.portal"))
         return render_template("index.html")
 
     @app.route("/upload", methods=["POST"])

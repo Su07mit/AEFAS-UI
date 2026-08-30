@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 
 from db.models import db, MoodleConfig, Question
@@ -6,6 +6,13 @@ from services.moodle_client import MoodleClient
 from Routes.dashboard_routes import questions_to_gift
 
 moodle_bp = Blueprint("moodle", __name__, url_prefix="/dashboard/moodle")
+
+
+@moodle_bp.before_request
+@login_required
+def restrict_to_staff():
+    if current_user.role == "student":
+        return redirect(url_for("student.portal"))
 
 
 @moodle_bp.route("/settings", methods=["GET", "POST"])

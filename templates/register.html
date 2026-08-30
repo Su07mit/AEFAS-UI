@@ -4,6 +4,11 @@
 <div class="auth-container">
   <form method="POST" class="auth-form">
     <h2>Create your AEFAS account</h2>
+    <label>I am a</label>
+    <select name="role" required>
+      <option value="student">Student</option>
+      <option value="teacher">Teacher / Admin</option>
+    </select>
     <label>Username</label>
     <input type="text" name="username" required autofocus>
     <label>Email</label>

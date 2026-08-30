@@ -1,10 +1,17 @@
 import json
-from flask import Blueprint, render_template, request, jsonify, Response
+from flask import Blueprint, render_template, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 
 from db.models import db, Question, ExportLog
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
+
+
+@dashboard_bp.before_request
+@login_required
+def restrict_to_staff():
+    if current_user.role == "student":
+        return redirect(url_for("student.portal"))
 
 
 @dashboard_bp.route("/")

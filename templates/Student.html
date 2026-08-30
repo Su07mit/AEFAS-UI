@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}Student Portal - AEFAS{% endblock %}
+{% block content %}
+<style>
+  :root{
+    --bg:#080a14; --surface:rgba(255,255,255,0.035); --surface-strong:rgba(255,255,255,0.06);
+    --border:rgba(148,163,220,0.14); --border-bright:rgba(110,231,249,0.35);
+    --text:#e7ebfa; --text-muted:#8892b3; --text-dim:#5b6485;
+    --cyan:#5eead4; --violet:#a78bfa; --amber:#fbbf6e; --danger:#f97066;
+    --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+    --radius:14px;
+  }
+  .student-shell *{ box-sizing:border-box; }
+  .student-shell{
+    display:grid; grid-template-columns:250px 1fr; min-height:100vh;
+    background:radial-gradient(circle at 10% -10%, rgba(94,234,212,0.08), transparent 45%),
+               radial-gradient(circle at 90% 10%, rgba(167,139,250,0.08), transparent 40%), var(--bg);
+    color:var(--text); font-family:var(--font-body);
+  }
+  .s-sidebar{
+    background:linear-gradient(180deg, #0e1220, #0a0d18);
+    border-right:1px solid var(--border); padding:24px 18px;
+    position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
+  }
+  .s-brand{ display:flex; align-items:center; gap:10px; padding-bottom:18px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+  .s-cube-wrap{ width:34px; height:34px; perspective:240px; flex-shrink:0; }
+  .s-cube{ width:100%; height:100%; position:relative; transform-style:preserve-3d; transform:rotateX(-18deg); animation:s-spin 7s linear infinite; }
+  .s-face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:14px; color:#050813; border-radius:9px; backface-visibility:hidden; }
+  .s-front{ background:linear-gradient(135deg,var(--cyan),var(--violet)); transform:translateZ(17px); }
+  .s-back{ background:linear-gradient(135deg,var(--violet),var(--cyan)); transform:rotateY(180deg) translateZ(17px); }
+  .s-right{ background:linear-gradient(135deg,var(--violet),var(--amber)); transform:rotateY(90deg) translateZ(17px); }
+  .s-left{ background:linear-gradient(135deg,var(--amber),var(--violet)); transform:rotateY(-90deg) translateZ(17px); }
+  .s-top{ background:linear-gradient(135deg,var(--cyan),var(--amber)); transform:rotateX(90deg) translateZ(17px); }
+  .s-bottom{ background:linear-gradient(135deg,var(--amber),var(--cyan)); transform:rotateX(-90deg) translateZ(17px); }
+  @keyframes s-spin{ from{ transform:rotateX(-18deg) rotateY(0deg);} to{ transform:rotateX(-18deg) rotateY(360deg);} }
+  .s-brand h1{ font-family:var(--font-display); font-size:14.5px; letter-spacing:0.04em; }
+  .s-brand p{ font-size:10px; color:var(--text-dim); font-family:var(--font-mono); margin-top:2px; }
+  .s-nav{ display:flex; flex-direction:column; gap:3px; flex:1; }
+  .s-nav a{ display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:8px; font-size:13px; color:var(--text-muted); text-decoration:none; }
+  .s-nav a:hover, .s-nav a.active{ background:var(--surface); color:var(--cyan); }
+  .s-logout{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:10px 12px; margin-top:12px;
+    border-radius:9px; font-family:var(--font-display); font-size:12.5px; font-weight:600; color:#fff;
+    background:linear-gradient(90deg,#ff3b3b,#ffb03b,#f4ff3b,#3bff6e,#3bd4ff,#6e3bff,#ff3bd4,#ff3b3b);
+    background-size:400% 100%; animation:s-rgb 6s linear infinite; text-decoration:none;
+  }
+  @keyframes s-rgb{ 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
+
+  .s-main{ padding:30px 36px 70px; max-width:1100px; }
+  .s-topbar{ display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:22px; margin-bottom:26px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:14px; }
+  .s-topbar h2{ font-family:var(--font-display); font-size:22px; }
+  .s-topbar p{ color:var(--text-muted); font-size:13px; margin-top:4px; }
+  .s-pill{ font-family:var(--font-mono); font-size:11px; padding:6px 12px; border-radius:100px; background:rgba(94,234,212,0.1); color:var(--cyan); border:1px solid rgba(94,234,212,0.3); }
+
+  .s-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:22px; }
+  .s-card h3{ font-family:var(--font-display); font-size:15px; margin-bottom:14px; }
+
+  .s-upload{ border:1.5px dashed var(--border-bright); border-radius:12px; padding:26px; text-align:center; }
+  .s-upload p{ color:var(--text-muted); font-size:12.5px; margin-bottom:12px; }
+  .s-btn{ background:var(--surface-strong); color:var(--text); border:1px solid var(--border); font-weight:500; font-size:12.5px; padding:9px 15px; border-radius:8px; cursor:pointer; }
+  .s-btn:hover{ border-color:var(--border-bright); }
+  .s-btn-primary{ background:linear-gradient(135deg,var(--cyan),#38bdf8); color:#05121a; font-weight:700; border:none; }
+  #sUploadedList span{ display:block; margin:4px 0; font-size:12.5px; color:var(--text-muted); }
+
+  .s-form-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:14px; }
+  .s-form-group{ display:flex; flex-direction:column; gap:5px; }
+  .s-form-group label{ font-size:11px; color:var(--text-muted); }
+  .s-form-group input, .s-form-group select{
+    background:#0e1220; border:1px solid var(--border); border-radius:8px; padding:9px 11px;
+    color:var(--text); font-size:13px; outline:none;
+  }
+  .s-form-group input:focus, .s-form-group select:focus{ border-color:var(--cyan); }
+  .s-summary{ grid-column:1/-1; font-family:var(--font-mono); font-size:12px; color:var(--text-muted); }
+  .s-summary strong{ color:var(--cyan); }
+  .s-form-buttons{ grid-column:1/-1; margin-top:4px; }
+
+  .s-question{ background:var(--surface-strong); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .s-question .s-qtag{ font-family:var(--font-mono); font-size:10px; color:var(--violet); text-transform:uppercase; margin-bottom:6px; }
+  .s-question .s-qtext{ font-size:13.5px; margin-bottom:8px; }
+  .s-question .s-opts{ list-style:none; padding:0; margin:0 0 8px; }
+  .s-question .s-opts li{ font-size:12.5px; color:var(--text-muted); padding:4px 0; }
+  .s-answer{ display:none; font-size:12.5px; color:var(--cyan); border-top:1px solid var(--border); padding-top:8px; margin-top:6px; }
+  .s-reveal-btn{ background:none; border:1px solid var(--border-bright); color:var(--cyan); font-size:11px; padding:5px 10px; border-radius:100px; cursor:pointer; }
+
+  .s-empty{ border:1px dashed var(--border); border-radius:12px; padding:30px; text-align:center; color:var(--text-muted); font-size:13px; }
+  @media (max-width:900px){ .student-shell{ grid-template-columns:1fr; } .s-sidebar{ position:relative; height:auto; } }
+</style>
+
+<div class="student-shell">
+  <aside class="s-sidebar">
+    <div class="s-brand">
+      <div class="s-cube-wrap">
+        <div class="s-cube">
+          <div class="s-face s-front">A</div>
+          <div class="s-face s-back">A</div>
+          <div class="s-face s-right">A</div>
+          <div class="s-face s-left">A</div>
+          <div class="s-face s-top">A</div>
+          <div class="s-face s-bottom">A</div>
+        </div>
+      </div>
+      <div>
+        <h1>AEFAS</h1>
+        <p>Student Portal</p>
+      </div>
+    </div>
+    <nav class="s-nav">
+      <a href="#materials" class="active">📄 Study Materials</a>
+      <a href="#generate">✦ Generate Questions</a>
+      <a href="#history">☰ My Questions</a>
+    </nav>
+    <a href="{{ url_for('auth.logout') }}" class="s-logout">⏻ Logout</a>
+  </aside>
+
+  <main class="s-main">
+    <header class="s-topbar">
+      <div>
+        <h2>Welcome, {{ current_user.username }}</h2>
+        <p>Upload your own study material and generate practice questions from it — powered by the same AI pipeline lecturers use.</p>
+      </div>
+      <span class="s-pill">{{ total }} questions generated so far</span>
+    </header>
+
+    <section id="materials" class="s-card">
+      <h3>1. Upload Study Materials</h3>
+      <div class="s-upload">
+        <p>Upload lecture notes or textbook PDFs to ground your practice questions in real content.</p>
+        <input type="file" id="sFileInput" multiple accept=".pdf" style="display:none">
+        <button class="s-btn" onclick="document.getElementById('sFileInput').click()">Choose PDF Files</button>
+        <div id="sUploadedList" style="margin-top:12px;"></div>
+        <button class="s-btn" id="sBuildIndexBtn" style="display:none; margin-top:10px;">⚡ Build Index</button>
+      </div>
+    </section>
+
+    <section id="generate" class="s-card">
+      <h3>2. Generate Practice Questions</h3>
+      <form id="sGenerateForm" class="s-form-grid">
+        <div class="s-form-group">
+          <label>Discipline</label>
+          <select id="sDiscipline">
+            <option>Information Technology</option>
+            <option>Information Systems</option>
+            <option>Accounting</option>
+            <option>Business</option>
+            <option>Management</option>
+            <option>TESOL</option>
+          </select>
+        </div>
+        <div class="s-form-group">
+          <label>Category</label>
+          <select id="sCategory">
+            <option>Theory</option>
+            <option>Synthesis</option>
+            <option>Application</option>
+          </select>
+        </div>
+        <div class="s-form-group">
+          <label>Topic</label>
+          <input type="text" id="sTopic" placeholder="e.g. Database Normalization">
+        </div>
+        <div class="s-form-group">
+          <label>Difficulty</label>
+          <select id="sDifficulty">
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+          </select>
+        </div>
+        <div class="s-form-group">
+          <label>Multiple Choice</label>
+          <input type="number" id="sMcqCount" min="0" max="20" value="3">
+        </div>
+        <div class="s-form-group">
+          <label>True/False</label>
+          <input type="number" id="sTfCount" min="0" max="20" value="2">
+        </div>
+        <div class="s-form-group">
+          <label>Short Answer</label>
+          <input type="number" id="sShortCount" min="0" max="20" value="0">
+        </div>
+        <div class="s-summary">Total: <strong id="sTotalCount">5</strong> questions</div>
+        <div class="s-form-buttons">
+          <button type="submit" class="s-btn s-btn-primary">Generate Questions</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="results" class="s-card">
+      <h3>Results</h3>
+      <div id="sResultsList">
+        <div class="s-empty">Generate a batch of questions above to see them here.</div>
+      </div>
+    </section>
+
+    <section id="history" class="s-card">
+      <h3>My Question History</h3>
+      <div id="sHistoryList">
+        <div class="s-empty">Loading your past questions…</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='student.js') }}"></script>
+{% endblock %}
