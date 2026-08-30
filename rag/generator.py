@@ -11,17 +11,23 @@ print(f"Loading {MODEL_NAME}... (first time downloads ~2GB, please wait)")
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-# Use Apple MPS if available, otherwise CPU
-if torch.backends.mps.is_available():
+# Prefer NVIDIA CUDA, then Apple MPS, then fall back to CPU
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+    model_dtype = torch.float16
+    print(f"Using CUDA GPU ({torch.cuda.get_device_name(0)}) for fast question generation!")
+elif torch.backends.mps.is_available():
     device = torch.device("mps")
+    model_dtype = torch.float32
     print("Using Apple MPS (GPU) for faster Question generation! PLEASE WAIT")
 else:
     device = torch.device("cpu")
+    model_dtype = torch.float32
     print("Using CPU — Question generation will be slow")
 
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
-    torch_dtype=torch.float32,
+    torch_dtype=model_dtype,
     low_cpu_mem_usage=True
 ).to(device)
 
@@ -30,7 +36,7 @@ generator = pipeline(
     model=model,
     tokenizer=tokenizer,
     device=device,
-    max_new_tokens=512,
+    max_new_tokens=256,
     do_sample=True,
     temperature=0.3,
     repetition_penalty=1.1
@@ -207,16 +213,20 @@ Explanation: [brief explanation]</s>
 Q:"""
 
     # Generate
+    import time
+    start = time.time()
     try:
         output = generator(prompt)
+        elapsed = time.time() - start
         generated = output[0]["generated_text"]
         raw = generated.split("<|assistant|>")[-1].strip()
         if not raw.startswith("Q:"):
             raw = "Q: " + raw
-        print(f"✅ Generated {q_type} question")
+        print(f"✅ Generated {q_type} question in {elapsed:.1f}s")
         return parse_single_question(raw, q_type, topic, difficulty, source, category)
     except Exception as e:
-        print(f"⚠️ Failed to generate {q_type}: {e} — using fallback")
+        elapsed = time.time() - start
+        print(f"⚠️ Failed to generate {q_type} after {elapsed:.1f}s: {e} — using fallback")
         return fallback_single_question(q_type, topic, discipline, difficulty, source, category)
 
 
@@ -254,6 +264,33 @@ def build_prompt(retrieved_chunks, discipline, category, topic, difficulty, coun
         all_questions.append(q)
 
     return all_questions
+
+
+# ─── Practice-Mode Explanation Generator ─────────────────────────────────────
+
+def generate_explanation(question_text, context, topic):
+    """Generate a tutor-style explanation for a practice question. Used by the
+    Student Practice Mode 'Get AI Explanation' feature."""
+    prompt = f"""<|system|>
+You are a supportive university tutor helping a student understand a concept.</s>
+<|user|>
+Context: "{context}"
+
+The student is practicing this question about {topic}:
+"{question_text}"
+
+Write a clear, encouraging explanation (3-4 sentences) that helps the student
+understand the underlying concept. Do not just repeat the question.</s>
+<|assistant|>
+"""
+    try:
+        output = generator(prompt)
+        generated = output[0]["generated_text"]
+        explanation = generated.split("<|assistant|>")[-1].strip()
+        return explanation or f"Review your source material on {topic} — focus on the core definitions and how they apply in practice."
+    except Exception as e:
+        print(f"⚠️ Explanation generation failed: {e}")
+        return f"Explanation unavailable right now. Review your source material on {topic} in the meantime."
 
 
 # ─── Main Entry Point ────────────────────────────────────────────────────────

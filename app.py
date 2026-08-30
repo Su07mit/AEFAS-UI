@@ -10,7 +10,7 @@ from rag.pdf_loader import extract_text_from_pdf
 from rag.chunker import chunk_documents
 from rag.embedder import LocalEmbedder
 from rag.vector_store import LocalFAISSStore
-from rag.generator import generate_questions_with_ollama
+from rag.generator import generate_questions_with_ollama, generate_single_question, generate_explanation
 from rag.retriever import retrieve_context
 from Routes.auth_routes import auth_bp
 from Routes.dashboard_routes import dashboard_bp
@@ -22,6 +22,7 @@ ALLOWED_EXTENSIONS = {"pdf"}
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.config["PROPAGATE_EXCEPTIONS"] = False
 
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     os.makedirs(app.config["DATA_FOLDER"], exist_ok=True)
@@ -39,6 +40,14 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(moodle_bp)
+
+    @app.template_global()
+    def asset_version(filename):
+        path = os.path.join(app.static_folder, filename)
+        try:
+            return int(os.path.getmtime(path))
+        except OSError:
+            return 0
 
     with app.app_context():
         db.create_all()
@@ -109,23 +118,92 @@ def create_app():
             category=category, topic=topic, difficulty=difficulty, counts=counts
         )
 
-        # NOTE: assumes questions["questions"] is a list of dicts with
-        # type / question_text / options / correct_answer keys — verify
-        # against your actual generator.py output and adjust if different.
         saved_ids = []
         for q in questions.get("questions", []):
+            q_type = q.get("type", "unknown")
+            raw_options = q.get("options")
+            raw_answer = (q.get("answer") or "").strip()
+
+            options_json = None
+            correct_answer = raw_answer
+
+            if q_type == "multiple_choice" and raw_options:
+                letters = ["A", "B", "C", "D"]
+                correct_letter = raw_answer.upper()[:1] if raw_answer else "A"
+                opts = [{"text": text, "is_correct": letter == correct_letter}
+                        for letter, text in zip(letters, raw_options)]
+                if not any(o["is_correct"] for o in opts):
+                    opts[0]["is_correct"] = True
+                options_json = json.dumps(opts)
+                correct_answer = next((o["text"] for o in opts if o["is_correct"]), "")
+
             row = Question(
                 user_id=current_user.id, discipline=discipline, category=category,
-                topic=topic, difficulty=difficulty, question_type=q.get("type", "unknown"),
-                question_text=q.get("question_text", ""),
-                options=json.dumps(q.get("options")) if q.get("options") else None,
-                correct_answer=q.get("correct_answer", ""), status="pending",
+                topic=topic, difficulty=difficulty, question_type=q_type,
+                question_text=q.get("question", ""),
+                options=options_json,
+                correct_answer=correct_answer, status="pending",
             )
             db.session.add(row)
             saved_ids.append(row)
         db.session.commit()
         questions["saved_ids"] = [r.id for r in saved_ids]
         return jsonify(questions)
+
+    @app.route("/practice/generate", methods=["POST"])
+    @login_required
+    def practice_generate():
+        data = request.json or {}
+        topic = (data.get("topic") or "").strip() or "General Academic Topic"
+        difficulty = data.get("difficulty", "Easy")
+        mode = data.get("mode", "Quick Practice")
+
+        mode_to_type = {
+            "Quick Practice": "short_answer",
+            "Exam Preparation": "essay",
+            "Revision Drill": "true_false",
+        }
+        q_type = mode_to_type.get(mode, "short_answer")
+
+        retrieved = retrieve_context(query=topic, embedder=app.embedder, vector_store=app.vector_store, top_k=3)
+        if not retrieved:
+            return jsonify({"error": "No indexed material yet — upload PDFs and build the RAG index first."}), 400
+
+        context = retrieved[0]["text"][:500]
+        source = retrieved[0].get("source_file", "PDF")
+        q = generate_single_question(q_type, q_type, context, source, "General Study", topic, difficulty, "Practice")
+
+        return jsonify({
+            "type": q_type,
+            "question": q.get("question", ""),
+            "options": q.get("options"),
+            "answer": q.get("answer", ""),
+            "explanation": q.get("explanation", ""),
+            "source": source,
+        })
+
+    @app.route("/practice/explain", methods=["POST"])
+    @login_required
+    def practice_explain():
+        data = request.json or {}
+        question_text = (data.get("question") or "").strip()
+        topic = (data.get("topic") or "the topic").strip()
+        if not question_text:
+            return jsonify({"error": "Generate a practice question first."}), 400
+
+        retrieved = retrieve_context(query=topic, embedder=app.embedder, vector_store=app.vector_store, top_k=1)
+        context = retrieved[0]["text"][:500] if retrieved else ""
+        explanation = generate_explanation(question_text, context, topic)
+        return jsonify({"explanation": explanation})
+
+    @app.errorhandler(Exception)
+    def handle_uncaught_error(e):
+        import traceback
+        traceback.print_exc()
+        code = getattr(e, "code", 500)
+        if not isinstance(code, int):
+            code = 500
+        return jsonify({"ok": False, "error": str(e) or e.__class__.__name__}), code
 
     @app.route("/files", methods=["GET"])
     @login_required
@@ -139,4 +217,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001, threaded=True)

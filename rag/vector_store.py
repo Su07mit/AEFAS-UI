@@ -35,6 +35,10 @@ class LocalFAISSStore: # FAISS Database handler
             self.metadata = json.load(f)
 
     def search(self, query_embedding, top_k=5):
+        if self.index is None:
+            # No PDFs have been indexed yet — return no context instead of crashing.
+            return []
+
         query_embedding = np.array([query_embedding]).astype("float32")
         distances, indices = self.index.search(query_embedding, top_k)
 

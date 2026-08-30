@@ -1,16 +1,431 @@
 {% extends "base.html" %}
 {% block title %}Login - AEFAS{% endblock %}
 {% block content %}
-<div class="auth-container">
-  <form method="POST" class="auth-form">
-    <h2>Sign in to AEFAS</h2>
-    <label>Username or email</label>
-    <input type="text" name="username" required autofocus>
-    <label>Password</label>
-    <input type="password" name="password" required>
-    <label><input type="checkbox" name="remember"> Remember me</label>
-    <button type="submit">Login</button>
-    <p>No account? <a href="{{ url_for('auth.register') }}">Register</a></p>
-  </form>
+<style>
+  .login-scene{
+    position:relative;
+    min-height:100vh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(94,234,212,0.14), transparent 45%),
+      radial-gradient(circle at 85% 15%, rgba(167,139,250,0.14), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(251,191,110,0.08), transparent 50%),
+      #080a14;
+    font-family:'Inter', sans-serif;
+    color:#e7ebfa;
+  }
+
+  /* ---------- KOI banner ---------- */
+  .koi-banner{
+    position:relative;
+    width:100%;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    background:linear-gradient(90deg, #0b0f1e, #131a30, #0b0f1e);
+    border-bottom:1px solid rgba(148,163,220,0.18);
+    overflow:hidden;
+  }
+  .koi-banner::before{
+    content:"";
+    position:absolute;
+    top:0; left:-40%;
+    width:40%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(251,191,110,0.16), transparent);
+    animation:banner-shimmer 5s ease-in-out infinite;
+  }
+  @keyframes banner-shimmer{
+    0%{ left:-40%; }
+    100%{ left:120%; }
+  }
+  .koi-crest{
+    width:34px; height:34px;
+    border-radius:8px;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:#0b0f1e;
+    background:linear-gradient(135deg, #fbbf6e, #f4d58d);
+    box-shadow:0 0 18px rgba(251,191,110,0.4);
+  }
+  .koi-banner-text{
+    text-align:center;
+    z-index:1;
+  }
+  .koi-banner-text .koi-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#fbbf6e;
+  }
+  .koi-banner-text .koi-sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:#8892b3;
+    letter-spacing:0.05em;
+    margin-top:2px;
+  }
+
+  /* ---------- particles (exploding sparks) ---------- */
+  .particle-field{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .particle{
+    position:absolute;
+    top:50%; left:50%;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--pcolor, #5eead4);
+    box-shadow:0 0 10px var(--pcolor, #5eead4);
+    opacity:0;
+    animation:particle-burst 2.6s ease-out forwards, particle-fade 2.6s ease-out forwards;
+    animation-delay:var(--pdelay, 0s);
+  }
+  @keyframes particle-burst{
+    0%{ transform:translate(-50%,-50%) rotate(var(--pangle)) translateX(0); }
+    100%{ transform:translate(-50%,-50%) rotate(var(--pangle)) translateX(var(--pdist)); }
+  }
+  @keyframes particle-fade{
+    0%{ opacity:0; }
+    12%{ opacity:1; }
+    100%{ opacity:0; }
+  }
+
+  /* ---------- main stage ---------- */
+  .login-stage{
+    flex:1;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:56px;
+    padding:48px 24px;
+    perspective:1400px;
+    flex-wrap:wrap;
+  }
+
+  /* ---------- 3D login card ---------- */
+  .login-card-wrap{
+    transform-style:preserve-3d;
+    animation:card-enter 0.9s cubic-bezier(.2,.9,.25,1.15) both;
+  }
+  @keyframes card-enter{
+    0%{ opacity:0; transform:translateY(40px) rotateX(20deg) scale(.85); }
+    100%{ opacity:1; transform:translateY(0) rotateX(0deg) scale(1); }
+  }
+
+  .login-card{
+    width:380px;
+    max-width:88vw;
+    background:rgba(255,255,255,0.045);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(148,163,220,0.18);
+    border-radius:20px;
+    padding:34px 30px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(94,234,212,0.05);
+    transition:transform .15s ease;
+    transform-style:preserve-3d;
+  }
+
+  .login-logo-3d{
+    width:52px; height:52px;
+    margin:0 auto 18px;
+    perspective:260px;
+  }
+  .login-cube{
+    width:100%; height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transform:rotateX(-18deg);
+    animation:login-cube-spin 7s linear infinite;
+  }
+  .login-cube-face{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:20px;
+    color:#050813;
+    border-radius:13px;
+    backface-visibility:hidden;
+  }
+  .lcf-front{ background:linear-gradient(135deg,#5eead4,#a78bfa); transform:translateZ(26px); box-shadow:0 0 26px rgba(94,234,212,0.35); }
+  .lcf-back{ background:linear-gradient(135deg,#a78bfa,#5eead4); transform:rotateY(180deg) translateZ(26px); }
+  .lcf-right{ background:linear-gradient(135deg,#a78bfa,#fbbf6e); transform:rotateY(90deg) translateZ(26px); }
+  .lcf-left{ background:linear-gradient(135deg,#fbbf6e,#a78bfa); transform:rotateY(-90deg) translateZ(26px); }
+  .lcf-top{ background:linear-gradient(135deg,#5eead4,#fbbf6e); transform:rotateX(90deg) translateZ(26px); }
+  .lcf-bottom{ background:linear-gradient(135deg,#fbbf6e,#5eead4); transform:rotateX(-90deg) translateZ(26px); }
+  @keyframes login-cube-spin{
+    from{ transform:rotateX(-18deg) rotateY(0deg); }
+    to{ transform:rotateX(-18deg) rotateY(360deg); }
+  }
+
+  .login-card h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:4px;
+  }
+  .login-card .login-tagline{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:#8892b3;
+    margin-bottom:24px;
+  }
+
+  .login-card label{
+    display:block;
+    font-size:11.5px;
+    color:#8892b3;
+    margin-bottom:6px;
+    margin-top:14px;
+  }
+  .login-card input[type="text"],
+  .login-card input[type="password"]{
+    width:100%;
+    background:#0e1220;
+    border:1px solid rgba(148,163,220,0.18);
+    border-radius:10px;
+    padding:11px 13px;
+    color:#e7ebfa;
+    font-size:13.5px;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .login-card input:focus{
+    border-color:#5eead4;
+    box-shadow:0 0 0 3px rgba(94,234,212,0.15);
+  }
+  .login-card .remember-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:16px;
+    font-size:12.5px;
+    color:#8892b3;
+  }
+  .login-card .remember-row input{ width:auto; }
+
+  .login-submit{
+    width:100%;
+    margin-top:22px;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:#05121a;
+    background:linear-gradient(135deg,#5eead4,#38bdf8);
+    box-shadow:0 0 0 1px rgba(94,234,212,0.25), 0 10px 26px -6px rgba(94,234,212,0.5);
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .login-submit:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 0 1px rgba(94,234,212,0.4), 0 16px 34px -6px rgba(94,234,212,0.65);
+  }
+
+  .login-card p.register-link{
+    text-align:center;
+    margin-top:18px;
+    font-size:12.5px;
+    color:#8892b3;
+  }
+  .login-card p.register-link a{
+    color:#5eead4;
+    font-weight:600;
+    text-decoration:none;
+  }
+
+  /* ---------- flash messages ---------- */
+  .flash-container{
+    max-width:380px;
+    margin:0 auto 4px;
+    width:100%;
+  }
+  .flash{
+    background:rgba(249,112,102,0.12);
+    border:1px solid rgba(249,112,102,0.4);
+    color:#f97066;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:12.5px;
+    margin-bottom:10px;
+  }
+  .flash-success{
+    background:rgba(94,234,212,0.1);
+    border-color:rgba(94,234,212,0.4);
+    color:#5eead4;
+  }
+
+  /* ---------- student mascots ---------- */
+  .side-student{
+    width:150px;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    opacity:0;
+    animation:mascot-explode-in 0.8s cubic-bezier(.34,1.56,.64,1) both, mascot-float 4s ease-in-out 0.8s infinite;
+  }
+  .side-student.right{ animation-delay:0.15s, 0.95s; }
+  @keyframes mascot-explode-in{
+    0%{ opacity:0; transform:scale(.3) translateY(30px) rotate(-8deg); }
+    70%{ opacity:1; transform:scale(1.08) translateY(-6px) rotate(2deg); }
+    100%{ opacity:1; transform:scale(1) translateY(0) rotate(0deg); }
+  }
+  @keyframes mascot-float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-10px); }
+  }
+  .side-student svg{
+    width:120px; height:150px;
+    filter:drop-shadow(0 10px 20px rgba(94,234,212,0.2));
+  }
+  .side-bubble{
+    background:rgba(255,255,255,0.045);
+    border:1px solid rgba(148,163,220,0.18);
+    border-radius:12px;
+    padding:9px 12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:#a78bfa;
+    text-align:center;
+    line-height:1.5;
+  }
+
+  @media (max-width: 980px){
+    .side-student{ display:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .particle, .login-cube, .side-student, .login-card-wrap{ animation:none !important; }
+  }
+</style>
+
+<div class="login-scene">
+  <div class="koi-banner">
+    <div class="koi-crest">K</div>
+    <div class="koi-banner-text">
+      <div class="koi-name">King's Own Institute &middot; KOI</div>
+      <div class="koi-sub">AEFAS &mdash; AI-Enhanced Formative Assessment System</div>
+    </div>
+  </div>
+
+  <div class="particle-field">
+    {% set colors = ['#5eead4', '#a78bfa', '#fbbf6e', '#38bdf8'] %}
+    {% for i in range(24) %}
+      <span class="particle" style="
+        --pangle:{{ (i * 15) }}deg;
+        --pdist:{{ 140 + (i % 5) * 30 }}px;
+        --pdelay:{{ (i % 8) * 0.35 }}s;
+        --pcolor:{{ colors[i % 4] }};
+      "></span>
+    {% endfor %}
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="login-stage">
+    <div class="side-student left">
+      <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="112" rx="28" ry="7" fill="rgba(94,234,212,0.10)"/>
+        <path d="M24 116 Q24 72 50 70 Q76 72 76 116 Z" fill="#5eead4"/>
+        <rect x="60" y="80" width="18" height="24" rx="4" fill="#a78bfa" transform="rotate(12 69 92)"/>
+        <circle cx="50" cy="45" r="21" fill="#fbcfa0"/>
+        <path d="M29 41 Q31 15 50 15 Q69 15 71 41 Q68 24 50 24 Q32 24 29 41Z" fill="#3a2c22"/>
+        <circle cx="43" cy="46" r="2.3" fill="#080a14"/>
+        <circle cx="58" cy="46" r="2.3" fill="#080a14"/>
+        <path d="M42 53 Q50 59 58 53" stroke="#080a14" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="side-bubble">Upload your notes,<br>get instant questions</div>
+    </div>
+
+    <div class="login-card-wrap">
+      <form method="POST" class="login-card" id="loginCard">
+        <div class="login-logo-3d">
+          <div class="login-cube">
+            <div class="login-cube-face lcf-front">A</div>
+            <div class="login-cube-face lcf-back">A</div>
+            <div class="login-cube-face lcf-right">A</div>
+            <div class="login-cube-face lcf-left">A</div>
+            <div class="login-cube-face lcf-top">A</div>
+            <div class="login-cube-face lcf-bottom">A</div>
+          </div>
+        </div>
+        <h2>Sign in to AEFAS</h2>
+        <p class="login-tagline">Human-in-the-loop assessment generation</p>
+
+        <label for="loginUsername">Username or email</label>
+        <input type="text" id="loginUsername" name="username" required autofocus>
+
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="password" required>
+
+        <div class="remember-row">
+          <input type="checkbox" id="loginRemember" name="remember">
+          <label for="loginRemember" style="margin:0;">Remember me</label>
+        </div>
+
+        <button type="submit" class="login-submit">Login</button>
+        <p class="register-link">No account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+      </form>
+    </div>
+
+    <div class="side-student right">
+      <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="112" rx="28" ry="7" fill="rgba(167,139,250,0.10)"/>
+        <path d="M24 116 Q24 72 50 70 Q76 72 76 116 Z" fill="#a78bfa"/>
+        <rect x="16" y="82" width="20" height="15" rx="3" fill="#080a14"/>
+        <rect x="18" y="84" width="16" height="10" rx="1" fill="#5eead4" opacity="0.6"/>
+        <circle cx="50" cy="45" r="21" fill="#e8b98a"/>
+        <path d="M29 40 Q28 14 50 14 Q72 14 71 40 Q66 26 50 27 Q34 26 29 40Z" fill="#151022"/>
+        <circle cx="43" cy="46" r="2.3" fill="#080a14"/>
+        <circle cx="58" cy="46" r="2.3" fill="#080a14"/>
+        <path d="M42 53 Q50 59 58 53" stroke="#080a14" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="side-bubble">Approve in one click,<br>export straight to Moodle</div>
+    </div>
+  </div>
 </div>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return;
+  var card = document.getElementById('loginCard');
+  if(!card) return;
+  card.addEventListener('mousemove', function(e){
+    var rect = card.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width - 0.5;
+    var y = (e.clientY - rect.top) / rect.height - 0.5;
+    card.style.transform = 'perspective(900px) rotateX(' + (y * -6) + 'deg) rotateY(' + (x * 6) + 'deg)';
+  });
+  card.addEventListener('mouseleave', function(){
+    card.style.transform = '';
+  });
+})();
+</script>
 {% endblock %}

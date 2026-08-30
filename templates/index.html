@@ -106,6 +106,88 @@
       margin-top:2px;
     }
 
+    .brand-logo-3d{
+      width:38px; height:38px;
+      perspective:260px;
+      flex-shrink:0;
+    }
+    .cube{
+      width:100%; height:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transform:rotateX(-18deg);
+      animation:cube-spin 7s linear infinite;
+    }
+    .cube-face{
+      position:absolute;
+      inset:0;
+      width:38px; height:38px;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display);
+      font-weight:700;
+      font-size:16px;
+      color:#050813;
+      border-radius:10px;
+      backface-visibility:hidden;
+    }
+    .cube-front{ background:linear-gradient(135deg, var(--cyan), var(--violet)); transform:translateZ(19px); box-shadow:0 0 22px rgba(94,234,212,0.35); }
+    .cube-back{ background:linear-gradient(135deg, var(--violet), var(--cyan)); transform:rotateY(180deg) translateZ(19px); }
+    .cube-right{ background:linear-gradient(135deg, var(--violet), var(--amber)); transform:rotateY(90deg) translateZ(19px); }
+    .cube-left{ background:linear-gradient(135deg, var(--amber), var(--violet)); transform:rotateY(-90deg) translateZ(19px); }
+    .cube-top{ background:linear-gradient(135deg, var(--cyan), var(--amber)); transform:rotateX(90deg) translateZ(19px); }
+    .cube-bottom{ background:linear-gradient(135deg, var(--amber), var(--cyan)); transform:rotateX(-90deg) translateZ(19px); }
+
+    @keyframes cube-spin{
+      from{ transform:rotateX(-18deg) rotateY(0deg); }
+      to{ transform:rotateX(-18deg) rotateY(360deg); }
+    }
+
+    .mascot-wrap{
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+      padding:16px 2px 20px;
+      margin-bottom:4px;
+      border-bottom:1px solid var(--border);
+    }
+    .mascot-student{
+      width:44px; height:54px;
+      flex-shrink:0;
+      filter:drop-shadow(0 4px 10px rgba(94,234,212,0.25));
+      animation:mascot-bob 3s ease-in-out infinite;
+    }
+    @keyframes mascot-bob{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-4px); }
+    }
+    .speech-bubble{
+      position:relative;
+      background:var(--surface-strong);
+      border:1px solid var(--border-bright);
+      border-radius:10px;
+      padding:8px 10px;
+      font-family:var(--font-mono);
+      font-size:10.5px;
+      line-height:1.45;
+      color:var(--cyan);
+      margin-bottom:6px;
+    }
+    .speech-bubble::after{
+      content:"";
+      position:absolute;
+      left:-6px;
+      bottom:12px;
+      width:0; height:0;
+      border-top:6px solid transparent;
+      border-bottom:6px solid transparent;
+      border-right:6px solid var(--border-bright);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .cube{ animation:none; }
+      .mascot-student{ animation:none; }
+    }
+
     .sidebar-nav{
       display:flex;
       flex-direction:column;
@@ -159,6 +241,43 @@
     .sidebar-footer{
       padding-top:18px;
       border-top:1px solid var(--border);
+    }
+
+    .rgb-logout-btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      padding:11px 14px;
+      margin-bottom:14px;
+      border-radius:9px;
+      font-family:var(--font-display);
+      font-size:13px;
+      font-weight:600;
+      color:#fff;
+      letter-spacing:0.02em;
+      background:linear-gradient(90deg,
+        #ff3b3b, #ffb03b, #f4ff3b, #3bff6e, #3bd4ff, #6e3bff, #ff3bd4, #ff3b3b);
+      background-size:400% 100%;
+      animation:rgb-flow 6s linear infinite;
+      box-shadow:0 0 18px -4px rgba(255,255,255,0.35);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .rgb-logout-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 0 26px -4px rgba(255,255,255,0.55);
+      animation-duration:2.5s;
+    }
+    .rgb-logout-icon{ font-size:14px; line-height:1; }
+
+    @keyframes rgb-flow{
+      0%{ background-position:0% 50%; }
+      100%{ background-position:400% 50%; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .rgb-logout-btn{ animation:none; }
     }
 
     .prototype-badge{
@@ -908,11 +1027,38 @@
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-logo">A</div>
+        <div class="brand-logo-3d">
+          <div class="cube">
+            <div class="cube-face cube-front">A</div>
+            <div class="cube-face cube-back">A</div>
+            <div class="cube-face cube-right">A</div>
+            <div class="cube-face cube-left">A</div>
+            <div class="cube-face cube-top">A</div>
+            <div class="cube-face cube-bottom">A</div>
+          </div>
+        </div>
         <div>
           <h1>AEFAS[HUMAN IN LOOP]</h1>
           <p>AI Enhanced Formative Assesment System</p>
         </div>
+      </div>
+
+      <div class="mascot-wrap">
+        <svg class="mascot-student" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="50" cy="112" rx="28" ry="7" fill="rgba(94,234,212,0.10)"/>
+          <path d="M24 116 Q24 72 50 70 Q76 72 76 116 Z" fill="#a78bfa"/>
+          <rect x="14" y="78" width="13" height="26" rx="5" fill="#5eead4"/>
+          <circle cx="50" cy="45" r="21" fill="#fbcfa0"/>
+          <path d="M29 41 Q31 17 50 17 Q69 17 71 41 Q67 29 50 29 Q33 29 29 41Z" fill="#241e38"/>
+          <polygon points="21,31 50,17 79,31 50,45" fill="#080a14"/>
+          <rect x="46" y="29" width="8" height="8" fill="#080a14"/>
+          <line x1="77" y1="31" x2="77" y2="49" stroke="#fbbf6e" stroke-width="2"/>
+          <circle cx="77" cy="51" r="3" fill="#fbbf6e"/>
+          <circle cx="43" cy="46" r="2.3" fill="#080a14"/>
+          <circle cx="58" cy="46" r="2.3" fill="#080a14"/>
+          <path d="M42 54 Q50 60 58 54" stroke="#080a14" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="speech-bubble">Generating questions<br>was never so easy!</div>
       </div>
 
       <nav class="sidebar-nav">
@@ -951,6 +1097,10 @@
       </nav>
 
       <div class="sidebar-footer">
+        <a href="{{ url_for('auth.logout') }}" class="rgb-logout-btn">
+          <span class="rgb-logout-icon">⏻</span>
+          Logout
+        </a>
         <div class="prototype-badge">
           <span class="status-dot"></span>
           LLM System Online
@@ -1513,42 +1663,42 @@
           <div class="arch-card">
             <span class="arch-label">Frontend</span>
             <h4>HTML / CSS / JavaScript</h4>
-            <p>Responsive single-page prototype with dashboard layout and interactive components.</p>
+            <p>Server-rendered Flask (Jinja2) pages — generator, review dashboard, and auth screens — with live filtering and approve/discard controls.</p>
           </div>
           <div class="arch-card">
-            <span class="arch-label">Backend (Future)</span>
-            <h4>Flask / FastAPI / Node.js</h4>
-            <p>Potential API services for authentication, storage, AI orchestration, and export pipelines.</p>
+            <span class="arch-label">Backend</span>
+            <h4>Flask</h4>
+            <p>Implemented API and route layer handling authentication, PDF upload/indexing, generation, dashboard CRUD, export, and Moodle push.</p>
           </div>
           <div class="arch-card">
             <span class="arch-label">AI Layer</span>
-            <h4>Google Gemini</h4>
-            <p>Future question generation engine for prompts, feedback, and assessment drafting.</p>
+            <h4>TinyLlama-1.1B-Chat (local)</h4>
+            <p>Runs fully offline via HuggingFace Transformers (CPU/CUDA/MPS) — no external API calls. Generates questions with a template-based fallback.</p>
           </div>
           <div class="arch-card">
             <span class="arch-label">Retrieval Layer</span>
-            <h4>RAG + Teaching Resources</h4>
-            <p>Uploaded academic documents provide contextual grounding for safer and more relevant outputs.</p>
+            <h4>RAG — PyMuPDF + MiniLM + FAISS</h4>
+            <p>Uploaded PDFs are extracted, chunked, embedded, and indexed in FAISS, grounding every generated question in real course content.</p>
           </div>
           <div class="arch-card">
             <span class="arch-label">Database</span>
-            <h4>PostgreSQL / MongoDB</h4>
-            <p>Future item bank storage, metadata indexing, audit logging, and export records.</p>
+            <h4>SQLite (SQLAlchemy)</h4>
+            <p>Implemented item bank storage for users, questions, Moodle config, and export logs.</p>
           </div>
           <div class="arch-card">
             <span class="arch-label">Deployment</span>
-            <h4>Linux / Docker / Local</h4>
-            <p>Flexible development and deployment setup for prototype, testing, and institutional hosting.</p>
+            <h4>Linux / Local (Docker planned)</h4>
+            <p>Runs on the local Flask dev server today; containerized deployment for institutional hosting is still future work.</p>
           </div>
           <div class="arch-card">
             <span class="arch-label">Security</span>
-            <h4>OAuth2 / SSO / Role Access</h4>
-            <p>Planned lecturer and student access controls for future production deployment.</p>
+            <h4>Session Auth (OAuth2 / SSO planned)</h4>
+            <p>Login is implemented via Flask-Login with hashed passwords. OAuth2/SSO and role-based access are still future work.</p>
           </div>
           <div class="arch-card emphasis">
             <span class="arch-label">Prototype Note</span>
-            <h4>Front-end Only Demonstration</h4>
-            <p>No real database, AI model, login, analytics, or backend integration is included in this university prototype.</p>
+            <h4>Functional Full-Stack Prototype</h4>
+            <p>Real backend, real local AI model, real database, real login, and a working Moodle export/push pipeline are included. Containerized deployment and OAuth2/SSO remain future work.</p>
           </div>
         </div>
       </section>

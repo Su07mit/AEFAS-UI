@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #0b1120;
   --bg-soft: #111a2e;
   --panel: #ffffff;
@@ -175,6 +176,21 @@ textarea {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.topbar-actions a.ghost-btn,
+.topbar-actions a.primary-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.user-chip {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--muted);
+  padding: 8px 4px;
 }
 
 .section {
@@ -587,6 +603,33 @@ button:hover {
 .review-list {
   display: grid;
   gap: 18px;
+}
+
+.question-textarea {
+  display: block;
+  width: 100%;
+  min-height: 130px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.question-textarea:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.question-options {
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .question-card {

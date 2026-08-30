@@ -73,36 +73,126 @@
   },
   {
     "chunk_id": 12,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 1,
+    "text": "ICT731 Data Mining  \nTerm 2, 2025 \nWeek 7 Tutorial \n(Submit this tutorial to Moodle by Friday 22/08/2025 @ 23.59) \nName: Sumit Kafle  \nStudent ID: 20032965 \nSubject Name: Data Mining \n \n \n1. Implement and run the Python regression programs discussed in \nWeek 7 Lecture saving Python screen captures of your operations and \nsubmitting them. \n \n2. Install RapidMiner and go through Textbook pages 972-984 (for the \nonline version of the textbook see pages 522-526) saving RapidMiner \nscreen captures of your operations and submitting them."
+  },
+  {
+    "chunk_id": 13,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 2,
+    "text": "Question 1(Solution) \n \nCommand showing SimpleLR and MultipleLR: \n \n \nPlotpy:"
+  },
+  {
+    "chunk_id": 14,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 3,
+    "text": "PythonLR: \n \n \nSimplePoly plot:"
+  },
+  {
+    "chunk_id": 15,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 4,
+    "text": "SimpleDecisionTreeRegression cmd \n \n \n \n \n \n \n \n \n \n \n \n \nWeightMPG:"
+  },
+  {
+    "chunk_id": 16,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 6,
+    "text": "AutoMPGMR:"
+  },
+  {
+    "chunk_id": 17,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 7,
+    "text": "AutoMPGRF:"
+  },
+  {
+    "chunk_id": 18,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 8,
+    "text": "KNNRegression:"
+  },
+  {
+    "chunk_id": 19,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 9,
+    "text": "SettleHousing:"
+  },
+  {
+    "chunk_id": 20,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 10,
+    "text": "SettleDT:"
+  },
+  {
+    "chunk_id": 21,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 11,
+    "text": "SettlePoly:"
+  },
+  {
+    "chunk_id": 22,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 12,
+    "text": "SettleRF:"
+  },
+  {
+    "chunk_id": 23,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 13,
+    "text": "Question 2(Solution) \nProcess \nFirst the Breast Cancer dataset was retrieved from the RapidMiner local \nrepository. The missing values were then imputed using mean \nimputation, that is, the average value of the column was used to fill in \nthe missing values. The dataset was also cleaned and made reliable \nbefore modelling by duplicate data removal. \n \n \n  \n \nTraining \nA Logistic Regression algorithm was used to train the classification \nmodel. The model was trained with 10-fold Cross Validation and 90% of \ndata was used for training in each fold. The model was trained to predict \nthe class for each record, either class 2 (Benign) or class 4 (Malignant), \ngiven the attributes. \n \nTesting \nThe remaining 10% of the data in each fold was then used for testing the \nmodel. Predictions were made "
+  },
+  {
+    "chunk_id": 24,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 13,
+    "text": "Malignant), \ngiven the attributes. \n \nTesting \nThe remaining 10% of the data in each fold was then used for testing the \nmodel. Predictions were made using the Apply Model operator and \nevaluations were made using the Performance operator. The overall \naccuracy of the model was 94.74% and precision for benign and \nmalignant cases was 92.76% and 96.49% respectively. The recall rate for"
+  },
+  {
+    "chunk_id": 25,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 14,
+    "text": "benign and malignant class was 96.24% and 93.22% respectively, which \nshows high performance of the model in both the classes. \n \nHere’s the training and testing validation set performed in AI Altair \nStudio: \n \n \n \n10% data used per fold for testing \nResults: \n Accuracy:        94.74% \n Precision (2):   92.76% \n Precision (4):   96.49% \n Recall (2):      96.24% \n Recall (4):      93.22% \n \n \nConclusion: \nData was pulled and duplicates were removed, and missing data was \nfilled in with mean imputation. Logistic Regression was trained and"
+  },
+  {
+    "chunk_id": 26,
+    "source_file": "ICT731_Data_Mining_-_Tutorial_Week_7-2.pdf",
+    "page": 15,
+    "text": "tested with 10-fold Cross Validation, which resulted in 94.74% accuracy, \nhigh precision and good recall for benign and malignant class."
+  },
+  {
+    "chunk_id": 27,
     "source_file": "Business.pdf",
     "page": 1,
     "text": "Business\nBusiness refers to the activity of producing, buying, and selling goods or services to meet customer\nneeds and generate profit. It plays a central role in economic development by creating jobs,\ngenerating income, and contributing to the overall growth of society.\nBusinesses can be classified into different types such as sole proprietorships, partnerships,\ncorporations, and franchises. Each type has its own structure, advantages, and legal requirements.\nBusinesses operate in various industries including retail, manufacturing, services, and technology.\nKey functions of a business include marketing, finance, operations, and human resources.\nMarketing focuses on promoting products and understanding customer needs, while finance\nmanages money and investments. Operations ensure efficien"
   },
   {
-    "chunk_id": 13,
+    "chunk_id": 28,
     "source_file": "Business.pdf",
     "page": 1,
     "text": "ces.\nMarketing focuses on promoting products and understanding customer needs, while finance\nmanages money and investments. Operations ensure efficient production and delivery of goods or\nservices, and human resources manage employees.\nEffective decision-making is crucial for business success. Managers analyze market trends,\ncustomer preferences, and financial data to make strategic decisions. Innovation and adaptability\nare also important, as businesses must respond to changing market conditions.\nTechnology has become an integral part of modern business operations. Digital tools enable online\nmarketing, e-commerce, and data analysis. Businesses use technology to improve efficiency and\nreach a global audience.\nEthics and social responsibility are also important considerations. Businesses a"
   },
   {
-    "chunk_id": 14,
+    "chunk_id": 29,
     "source_file": "Business.pdf",
     "page": 1,
     "text": "ses use technology to improve efficiency and\nreach a global audience.\nEthics and social responsibility are also important considerations. Businesses are expected to\noperate responsibly and contribute positively to society.\nIn conclusion, business is a dynamic and essential activity that drives economic growth and\ninnovation while meeting the needs of customers."
   },
   {
-    "chunk_id": 15,
+    "chunk_id": 30,
     "source_file": "Information_Systems.pdf",
     "page": 1,
     "text": "Information Systems\nInformation Systems (IS) are organized systems for collecting, processing, storing, and distributing\ninformation to support decision-making and control within an organization. They combine\ntechnology, people, and processes to manage data effectively.\nAn information system typically consists of hardware, software, databases, networks, and users.\nThese components work together to transform raw data into meaningful information. For example, a\nbusiness may use an information system to track sales, manage inventory, and generate reports.\nThere are different types of information systems, including Transaction Processing Systems (TPS),\nManagement Information Systems (MIS), Decision Support Systems (DSS), and Enterprise\nResource Planning (ERP) systems. Each type serves a specif"
   },
   {
-    "chunk_id": 16,
+    "chunk_id": 31,
     "source_file": "Information_Systems.pdf",
     "page": 1,
     "text": "(TPS),\nManagement Information Systems (MIS), Decision Support Systems (DSS), and Enterprise\nResource Planning (ERP) systems. Each type serves a specific purpose in supporting\norganizational activities.\nInformation systems improve efficiency by automating tasks and reducing manual errors. They also\nenhance communication within an organization by providing real-time access to information.\nManagers rely on information systems to analyze data and make informed decisions.\nSecurity and data integrity are important aspects of information systems. Organizations implement\nmeasures to protect data from unauthorized access and ensure accuracy. With the growth of big\ndata and analytics, information systems are becoming more advanced and capable of handling\nlarge volumes of data.\nIn summary, Informatio"
   },
   {
-    "chunk_id": 17,
+    "chunk_id": 32,
     "source_file": "Information_Systems.pdf",
     "page": 1,
     "text": "growth of big\ndata and analytics, information systems are becoming more advanced and capable of handling\nlarge volumes of data.\nIn summary, Information Systems play a crucial role in modern organizations by supporting\noperations, decision-making, and strategic planning. They enable businesses to remain competitive\nand adapt to changing environments."
